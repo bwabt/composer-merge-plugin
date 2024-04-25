@@ -29,7 +29,7 @@ Composer Merge Plugin 1.4.x (and older) requires Composer 1.x.
 Composer Merge Plugin 2.0.x (and newer) is compatible with both Composer 2.x and 1.x.
 
 ```
-$ composer require wikimedia/composer-merge-plugin
+$ composer require bwabt/composer-merge-plugin
 ```
 
 ### Upgrading from Composer 1 to 2
@@ -49,7 +49,7 @@ Usage
 ```json
 {
     "require": {
-        "wikimedia/composer-merge-plugin": "dev-master"
+        "bwabt/composer-merge-plugin": "dev-master"
     },
     "extra": {
         "merge-plugin": {
@@ -60,6 +60,9 @@ Usage
             "require": [
                 "submodule/composer.json"
             ],
+            "excluded-packages": {
+                "some-vendor/unnecessary-package": "*"
+            },
             "recurse": true,
             "replace": false,
             "ignore-duplicates": false,
@@ -126,6 +129,12 @@ in the top-level composer.json file:
 
 The `require` setting is identical to [`include`](#include) except when
 a pattern fails to match at least one file then it will cause an error.
+
+### excluded-packages
+
+The `excluded-packages` setting allows you to filter out packages from merged
+sources.  To exclude any version of the package, use '*' or you can target
+specific versions.
 
 ### recurse
 
