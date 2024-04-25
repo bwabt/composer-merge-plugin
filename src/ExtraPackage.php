@@ -762,12 +762,16 @@ class ExtraPackage
         if ($excluded = $state->getExcludedPackages()) {
             $requires = array_filter($requires, function (Link $package) use ($excluded) {
                 $package_name = $package->getTarget();
+                $keep = true;
                 if ($excluded_version = ($excluded[$package_name] ?? false)) {
                     $package_version = is_string($constraint = $package->getPrettyConstraint())
                         ? $constraint : $constraint->getPrettyString();
-                    return !(($excluded_version === '*') || ($excluded_version === $package_version));
+                    $keep = !(($excluded_version === '*') || ($excluded_version === $package_version));
                 }
-                return true;
+                if (!$keep) {
+                    $this->logger->debug("Excluding package: $package_name");
+                }
+                return $keep;
             });
         }
     }
