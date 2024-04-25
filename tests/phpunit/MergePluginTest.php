@@ -231,6 +231,44 @@ class MergePluginTest extends TestCase
      * Given a root package with requires
      *   and a composer.local.json with requires
      *   and the same package is listed in multiple files
+     *   and "exclude" contains "monolog/monolog" at any version
+     * When the plugin is run
+     * Then the root package should not contain "monolog/monolog".
+     */
+    public function testMergeWithExclude()
+    {
+        $that = $this;
+        $dir = $this->fixtureDir(__FUNCTION__);
+
+        $root = $this->rootFromJson("{$dir}/composer.json");
+
+        $root->setRequires(Argument::type('array'))->will(
+            function ($args) use ($that) {
+                $requires = $args[0];
+                $that->assertCount(3, $requires);
+                $that->assertArrayNotHasKey('monolog/monolog', $requires);
+                $that->assertArrayHasKey('abc/def', $requires);
+                $that->assertArrayHasKey('ghi/jkl', $requires);
+                $that->assertEquals(
+                    '1.0',
+                    $requires['ghi/jkl']->getPrettyConstraint()
+                );
+            }
+        );
+
+        $root->getRepositories()->shouldNotBeCalled();
+        $root->getConflicts()->shouldNotBeCalled();
+        $root->getReplaces()->shouldNotBeCalled();
+        $root->getProvides()->shouldNotBeCalled();
+        $root->getSuggests()->shouldNotBeCalled();
+
+        $this->triggerPlugin($root->reveal(), $dir);
+    }
+
+    /**
+     * Given a root package with requires
+     *   and a composer.local.json with requires
+     *   and the same package is listed in multiple files
      *   and "ignore-duplicates" is true
      *   and "replace" is true
      * When the plugin is run

@@ -262,9 +262,12 @@ class ExtraPackage
         $setter = 'set' . ucfirst($linkType['method']);
 
         $requires = $this->package->{$getter}();
+
         if (empty($requires)) {
             return;
         }
+
+        $this->removeExcludedPackages($requires, $state);
 
         $this->mergeStabilityFlags($root, $requires);
 
@@ -745,6 +748,28 @@ class ExtraPackage
         }
 
         return $references;
+    }
+
+    /**
+     * Removes excluded packages.
+     *
+     * @param array $requires
+     * @param PluginState $state
+     * @return void
+     */
+    protected function removeExcludedPackages(array &$requires, PluginState $state)
+    {
+        if ($excluded = $state->getExcludedPackages()) {
+            $requires = array_filter($requires, function (Link $package) use ($excluded) {
+                $package_name = $package->getTarget();
+                if ($excluded_version = ($excluded[$package_name] ?? false)) {
+                    $package_version = is_string($constraint = $package->getPrettyConstraint())
+                        ? $constraint : $constraint->getPrettyString();
+                    return !(($excluded_version === '*') || ($excluded_version === $package_version));
+                }
+                return true;
+            });
+        }
     }
 }
 // vim:sw=4:ts=4:sts=4:et:

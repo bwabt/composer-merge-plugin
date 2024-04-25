@@ -55,6 +55,8 @@ class PluginState
      */
     protected $replace = false;
 
+    protected $excluded_packages = [];
+
     /**
      * @var bool $ignore
      */
@@ -163,6 +165,7 @@ class PluginState
                 'require' => [],
                 'recurse' => true,
                 'replace' => false,
+                'excluded-packages' => false,
                 'ignore-duplicates' => false,
                 'merge-dev' => true,
                 'merge-extra' => false,
@@ -175,6 +178,8 @@ class PluginState
 
         $this->includes = (is_array($config['include'])) ?
             $config['include'] : [$config['include']];
+        $this->excluded_packages = (is_array($config['excluded-packages'])) ?
+            $config['excluded-packages'] : [$config['excluded-packages']];
         $this->requires = (is_array($config['require'])) ?
             $config['require'] : [$config['require']];
         $this->recurse = (bool)$config['recurse'];
@@ -205,6 +210,16 @@ class PluginState
     public function getRequires()
     {
         return $this->requires;
+    }
+
+    /**
+     * A list of packages to be excluded from the merge.
+     *
+     * @return array|mixed
+     */
+    public function getExcludedPackages()
+    {
+        return $this->excluded_packages;
     }
 
     /**

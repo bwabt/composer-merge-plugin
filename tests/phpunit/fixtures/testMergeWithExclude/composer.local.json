@@ -1,0 +1,7 @@
+{
+  "require": {
+    "monolog/monolog": "1.10.0",
+    "abc/def": "*",
+    "ghi/jkl": "2.0"
+  }
+}

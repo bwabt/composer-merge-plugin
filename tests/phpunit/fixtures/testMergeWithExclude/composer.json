@@ -1,0 +1,23 @@
+{
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "./.."
+    }
+  ],
+  "require": {
+    "wikimedia/composer-merge-plugin": "*@dev",
+    "ghi/jkl": "1.0"
+  },
+  "extra": {
+    "merge-plugin": {
+      "include": [
+        "composer.local.json"
+      ],
+      "excluded-packages": {
+        "monolog/monolog": "*",
+        "ghi/jkl": "2.0"
+      }
+    }
+  }
+}
